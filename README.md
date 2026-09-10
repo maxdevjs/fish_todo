@@ -17,7 +17,7 @@ This is a first implementation.
 
 Going to check and "borrow" 🏴‍☠️ ideas from
 
-- [ ] [https://github.com/thebitstick/fish-todotxt](fish-todotxt)
+- [ ] [thebitstick/fish-todotxt](https://github.com/thebitstick/fish-todotxt)
   - [ ] oh, wait... it does not have a `copy` feature
     - [ ] not even a `clear/nuke` one 😌
       - [ ] but it has `sort` and `complete` mmmh
@@ -33,8 +33,4 @@ With [Fisher](https://github.com/jorgebucaran/fisher):
 
 ```sh
 $ fisher install maxdevjs/fish_todo
-```
-
-```
-
 ```
