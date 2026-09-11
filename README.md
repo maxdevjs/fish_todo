@@ -13,7 +13,24 @@ should not exist to begin with!
 
 ## TODO
 
-This is a first implementation.
+This is a --first-- a second implementation.
+
+- [x] add `edit` feature (`$EDITOR` must be set)
+- [x] add `nuke` as `del` alias
+- [x] add `nukeall` as `clear` alias
+- [x] center output
+- [x] add line numbers to facilitate `del` operation
+- [x] add timestamp, e.g.: `(added 2026-09-11 05:13:12)`
+- [x] add due date, e.g.: `(due 2026-10-09 05:29)`
+- [x] add lustres as due date, e.g. 1 lustre: (due 2031-09-11 05:50:34)
+- [x] add decades as due date, e.g. 3 decades: (due 2056-09-11 05:50:34)
+- [x] add centuries as due date, e.g.: 3 centuries (due 2326-09-11 05:50:34)
+- [x] Available units: (minutes, hours, days, weeks, months, years, lustres, decades, centuries)
+- [x] add delete range, e.g.: `todo del 3 7`
+- [ ] add a warning message if too many tasks are pending
+- [ ] add completed status (maybe)
+- [ ] ...
+- [ ] screenshots or: later. Maybe.
 
 Going to check and "borrow" 🏴‍☠️ ideas from
 
@@ -22,8 +39,6 @@ Going to check and "borrow" 🏴‍☠️ ideas from
     - [ ] not even a `clear/nuke` one 😌
       - [ ] but it has `sort` and `complete` mmmh
         - [ ] definitely, to be checked
-
-- [ ] screenshots or: later. Maybe.
 
 Terminal: [kitty](https://sw.kovidgoyal.net/kitty/)
 
