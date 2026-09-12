@@ -58,6 +58,8 @@ This is a ~~first~~ ~~second~~ third iteration.
 - [x] add centuries as due date, e.g.: 3 centuries (due 2326-09-11 05:50:34)
 - [x] Available units: (minutes, hours, days, weeks, months, years, lustres, decades, centuries)
 - [x] add delete range, e.g.: `todo del 3 7`
+- [x] refactor `copy` to (hopefully) work in `X11` and `Wayland`
+- [ ] fix `del` output with no arguments
 - [ ] add copyall (tasks)?
 - [ ] option to set the `todo` file
   - [ ] name

@@ -1,3 +1,4 @@
+#!/usr/bin/env fish
 function add_due_date
     read -P "Add a due date? [y/N] " answer
 
@@ -69,6 +70,40 @@ function center_text
     end
 end
 
+function copy
+    switch "$XDG_SESSION_TYPE"
+        case wayland
+            if command -q wl-copy
+                wl-copy >/dev/null 2>&1 &
+                return
+            end
+
+        case x11
+            if command -q xclip
+                xclip -selection clipboard
+                return
+            else if command -q xsel
+                xsel --clipboard --input
+                return
+            end
+    end
+
+    # Fallbacks when XDG_SESSION_TYPE is missing
+    if test -n "$WAYLAND_DISPLAY"; and command -q wl-copy
+        wl-copy >/dev/null 2>&1 &
+        return
+    else if test -n "$DISPLAY"; and command -q xclip
+        xclip -selection clipboard
+        return
+    else if test -n "$DISPLAY"; and command -q xsel
+        xsel --clipboard --input
+        return
+    end
+
+    echo "No graphical clipboard available." >&2
+    return 1
+end
+
 function todo
     set -l todo_file $HOME/.config/fish/todo.txt
 
@@ -108,14 +143,34 @@ function todo
             # breaking Kitty's OSC 52 clipboard waiting lockup.
             # Thanks Gemini for finding the solution to a problem 
             # that probably did not exist at all.
-            sh -c "selected=\$(fzf --height=40% --layout=reverse --prompt='⚡ Select task to copy: ' < $todo_file); if [ -n \"\$selected\" ]; then echo -n \"\$selected\" | wl-copy 2>/dev/null; echo \"📋 Copied to clipboard: \\\"\$selected\\\"\" >/dev/tty; else echo \"🚫 Copy canceled.\" >/dev/tty; fi"
+            # sh -c "selected=\$(fzf --height=40% --layout=reverse --prompt='⚡ Select task to copy: ' < $todo_file); if [ -n \"\$selected\" ]; then echo -n \"\$selected\" | wl-copy 2>/dev/null; echo \"📋 Copied to clipboard: \\\"\$selected\\\"\" >/dev/tty; else echo \"🚫 Copy canceled.\" >/dev/tty; fi"
+
+            set -l selected (
+              fzf \
+                  --height=40% \
+                  --layout=reverse \
+                  --prompt='⚡ Select task to copy: ' \
+                  < "$todo_file"
+            )
+
+            if test -n "$selected"
+                printf '%s' "$selected" | copy
+                if test -e /dev/tty
+                    center_text "📋 Copied to clipboard: $selected" >/dev/tty
+                else
+                    center_text "📋 Copied to clipboard: $selected" >&2
+                end
+            else
+                # printf '%s\n' '🚫 Copy canceled.' >/dev/tty
+                center_text '🚫 Copy canceled.' >/dev/tty
+            end
         case del delete nuke
             set -l argument_count (count $argv)
 
             if test $argument_count -ne 2; and test $argument_count -ne 3
-                echo "Usage:"
-                echo "  todo delete NUMBER"
-                echo "  todo delete START END"
+                center_text "Usage:"
+                center_text "todo delete NUMBER"
+                center_text "todo delete START END"
                 return 1
             end
 
@@ -167,6 +222,6 @@ function todo
                 center_text "🎉 No pending tasks!"
             end
         case *
-            center_text "Usage: todo [add 'task' | clear/nukeall | copy | del/nuke 'number' | edit]"
+            center_text "Usage: todo [add task | clear/nukeall | copy | del/nuke number | edit]"
     end
 end
