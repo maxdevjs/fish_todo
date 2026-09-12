@@ -60,7 +60,7 @@ This is a ~~first~~ ~~second~~ third iteration.
 - [x] add delete range, e.g.: `todo del 3 7`
 - [x] refactor `copy` to (hopefully) work in `X11` and `Wayland`
 - [ ] fix `del` output with no arguments
-- [ ] add copyall (tasks)?
+- [x] add copyall (tasks)?
 - [ ] option to set the `todo` file
   - [ ] name
   - [ ] path
