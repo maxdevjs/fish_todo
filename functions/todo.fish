@@ -1,4 +1,7 @@
 #!/usr/bin/env fish
+
+set -g todo_file $HOME/.config/fish/todo.txt
+
 function add_due_date
     read -P "Add a due date? [y/N] " answer
 
@@ -70,7 +73,62 @@ function center_text
     end
 end
 
-function copy
+function copy_to
+    if not test -s $todo_file
+        center_text "🎉 No pending tasks to copy!"
+        return 0
+    end
+
+    if test (count $argv) -lt 2
+        echo "Usage:"
+        echo "  todo copy task"
+        echo "  todo copy all"
+        return 1
+    end
+    switch $argv[2]
+        case t task
+            sed -i '/^\s*$/d' $todo_file
+
+            # Using a dynamic subshell that flushes the selection to TTY explicitly, 
+            # breaking Kitty's OSC 52 clipboard waiting lockup.
+            # Thanks Gemini for finding the solution to a problem 
+            # that probably did not exist at all.
+            # sh -c "selected=\$(fzf --height=40% --layout=reverse --prompt='⚡ Select task to copy: ' < $todo_file); if [ -n \"\$selected\" ]; then echo -n \"\$selected\" | wl-copy 2>/dev/null; echo \"📋 Copied to clipboard: \\\"\$selected\\\"\" >/dev/tty; else echo \"🚫 Copy canceled.\" >/dev/tty; fi"
+
+            set -l selected (
+              fzf \
+                  --height=40% \
+                  --layout=reverse \
+                  --prompt='⚡ Select task to copy: ' \
+                  < "$todo_file"
+            )
+
+            if test -n "$selected"
+                printf '%s' "$selected" | copy_check_session
+                if test -e /dev/tty
+                    center_text "📋 Copied to clipboard: $selected" >/dev/tty
+                else
+                    center_text "📋 Copied to clipboard: $selected" >&2
+                end
+            else
+                # printf '%s\n' '🚫 Copy canceled.' >/dev/tty
+                center_text '🚫 Copy canceled.' >/dev/tty
+            end
+        case a all
+            # wl-copy <"$todo_file" >/dev/null 2>&1 &
+            cat "$todo_file" | copy_check_session >/dev/null 2>&1 &
+            copy_check_session <"$todo_file" >/dev/null 2>&1 &
+            center_text '📋 Copied all tasks.' >/dev/tty
+
+        case '*'
+            echo "Unknown copy mode: $argv[2]"
+            echo "Use: todo copy task | todo copy all"
+            return 1
+    end
+
+end
+
+function copy_check_session
     switch "$XDG_SESSION_TYPE"
         case wayland
             if command -q wl-copy
@@ -100,12 +158,12 @@ function copy
         return
     end
 
-    echo "No graphical clipboard available." >&2
+    center_text "No graphical clipboard available." >&2
     return 1
 end
 
 function todo
-    set -l todo_file $HOME/.config/fish/todo.txt
+    # set -l todo_file $HOME/.config/fish/todo.txt
 
     switch "$argv[1]"
         case add
@@ -132,38 +190,7 @@ function todo
             echo -n "" >$todo_file
             center_text "🧹 Todo list cleared!"
         case copy
-            if not test -s $todo_file
-                center_text "🎉 No pending tasks to copy!"
-                return 0
-            end
-
-            sed -i '/^\s*$/d' $todo_file
-
-            # Using a dynamic subshell that flushes the selection to TTY explicitly, 
-            # breaking Kitty's OSC 52 clipboard waiting lockup.
-            # Thanks Gemini for finding the solution to a problem 
-            # that probably did not exist at all.
-            # sh -c "selected=\$(fzf --height=40% --layout=reverse --prompt='⚡ Select task to copy: ' < $todo_file); if [ -n \"\$selected\" ]; then echo -n \"\$selected\" | wl-copy 2>/dev/null; echo \"📋 Copied to clipboard: \\\"\$selected\\\"\" >/dev/tty; else echo \"🚫 Copy canceled.\" >/dev/tty; fi"
-
-            set -l selected (
-              fzf \
-                  --height=40% \
-                  --layout=reverse \
-                  --prompt='⚡ Select task to copy: ' \
-                  < "$todo_file"
-            )
-
-            if test -n "$selected"
-                printf '%s' "$selected" | copy
-                if test -e /dev/tty
-                    center_text "📋 Copied to clipboard: $selected" >/dev/tty
-                else
-                    center_text "📋 Copied to clipboard: $selected" >&2
-                end
-            else
-                # printf '%s\n' '🚫 Copy canceled.' >/dev/tty
-                center_text '🚫 Copy canceled.' >/dev/tty
-            end
+            copy_to $argv
         case del delete nuke
             set -l argument_count (count $argv)
 
