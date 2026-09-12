@@ -167,6 +167,6 @@ function todo
                 center_text "🎉 No pending tasks!"
             end
         case *
-            center_text "Usage: todo [add 'task' | clear | copy | del 'number']"
+            center_text "Usage: todo [add 'task' | clear/nukeall | copy | del/nuke 'number' | edit]"
     end
 end
