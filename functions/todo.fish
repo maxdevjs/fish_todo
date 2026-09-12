@@ -81,8 +81,8 @@ function copy_to
 
     if test (count $argv) -lt 2
         echo "Usage:"
-        echo "  todo copy task"
-        echo "  todo copy all"
+        echo "  todo copy [a/all]"
+        echo "  todo copy [t/task]"
         return 1
     end
     switch $argv[2]
@@ -166,9 +166,9 @@ function todo
     # set -l todo_file $HOME/.config/fish/todo.txt
 
     switch "$argv[1]"
-        case add
+        case a add
             if test (count $argv) -lt 2
-                echo "Usage: todo add 'Your task here'"
+                echo "Usage: todo add 'task here'"
                 return 1
             end
             # set -l total_lines_num (math (wc -l < $todo_file \
@@ -243,12 +243,12 @@ function todo
         case ""
             set -l tasks (cat $todo_file | string match -r '\S+')
             if test (count $tasks) -gt 0
-                center_text "⚠️ Your pending tasks:"
+                center_text "⚠️ Pending tasks:"
                 center_text (awk '{ print }' "$todo_file" | string collect)
             else
                 center_text "🎉 No pending tasks!"
             end
         case *
-            center_text "Usage: todo [add task | clear/nukeall | copy | del/nuke number | edit]"
+            center_text "Usage: todo [a/add] task | clear/nukeall | copy [a/all/t/task] | [del/delete/nuke number | edit]"
     end
 end

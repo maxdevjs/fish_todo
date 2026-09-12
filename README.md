@@ -36,8 +36,9 @@ $ fisher install maxdevjs/fish_todo
 $ todo                                # task list
 $ todo [a/add] task                   # add a task
 $ todo [clear/nukeall]                # delete all tasks
-$ todo copy                           # copy a specific task to memory
-$ todo [del/delete/nuke] task_number  # delete a specific task
+$ todo copy [task]                    # copy a specific task to memory
+$ todo copy [all]                     # copy all tasks to memory
+$ todo [del/delete/nuke] index        # delete a specific task at provided index
 $ todo edit                           # open task file in `$EDITOR`
 
 ```
@@ -60,7 +61,8 @@ This is a ~~first~~ ~~second~~ third iteration.
 - [x] add delete range, e.g.: `todo del 3 7`
 - [x] refactor `copy` to (hopefully) work in `X11` and `Wayland`
 - [ ] fix `del` output with no arguments
-- [x] add copyall (tasks)?
+- [x] add copy all (tasks)?
+- [x] add `completions`
 - [ ] option to set the `todo` file
   - [ ] name
   - [ ] path
@@ -68,6 +70,8 @@ This is a ~~first~~ ~~second~~ third iteration.
 - [ ] add completed status (maybe)
 - [ ] ...
 - [ ] screenshots or: later. Maybe.
+
+- [ ] extract helper functions (as center_text) to some reusable utils file/plugin
 
 Going to check and "borrow" 🏴‍☠️ ideas from
 
